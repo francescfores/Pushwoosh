@@ -1,4 +1,5 @@
 <template>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.js"></script>
   <div class="hello">
     <h1>{{ msg }}</h1>
               <div class="box box-warning direct-chat direct-chat-warning">
@@ -75,14 +76,12 @@
             </div>
             <!-- /.box-body -->
             <div class="box-footer">
-              <form action="#" method="post">
                 <div class="input-group">
-                  <input type="text" name="message" placeholder="Type Message ..." class="form-control">
+                  <input id="notification" type="text" name="message" placeholder="Type Message ..." class="form-control">
                       <span class="input-group-btn">
-                        <button type="submit" class="btn btn-warning btn-flat">Send</button>
+                        <button v-on:click="notify "type="button" class="btn btn-warning btn-flat">Send</button>
                       </span>
                 </div>
-              </form>
             </div>
             <!-- /.box-footer-->
           </div>
@@ -99,6 +98,29 @@ export default {
       // preserves its current state and we are modifying
       // its initial state.
       msg: 'Hello World!'
+    }
+  },
+  methods: {
+    notify : function(){
+    var notification = $("#notification").val();
+    $.ajax({
+      type: "POST",
+      url: "https://cp.pushwoosh.com/json/1.3/createMessage",
+      data: JSON.stringify({
+          "request": {
+              "application": "4FC89B6D14A655.46488481",
+              "auth": "mTdns0j6qLYPa/A5htmD46xVyoxdVQfPBz7NRqYYHz9PhvKXgJtOkAY+yo0YTXDEoztQAJFY0JmXnd89tf59",
+              "notifications": [{
+                  "send_date": "now",
+                  "ignore_user_timezone": true,
+                  "content": notification
+              }]
+          }
+      }),
+      dataType: "json"
+    }).done(function(data) {
+        console.log(data);
+    });
     }
   }
 }
